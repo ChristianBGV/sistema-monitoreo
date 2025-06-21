@@ -7,13 +7,54 @@
 </head>
 <body>
   <h2>Crear Nuevo Evento</h2>
+
+  <!-- Botón de Cerrar Sesión -->
+  <button onclick="logout()">Cerrar sesión</button>
+
   <form id="eventoForm">
-    <input type="text" placeholder="Nombre del evento" required><br>
-    <input type="date" required><br>
-    <input type="text" placeholder="N° de WhatsApp del responsable" required><br>
-    <textarea placeholder="Descripción breve" required></textarea><br>
+    <input type="text" id="nombreEvento" placeholder="Nombre del evento" required><br>
+    <input type="date" id="fechaEvento" required><br>
+    <input type="text" id="whatsapp" placeholder="N° de WhatsApp del responsable" required><br>
+    <textarea id="descripcion" placeholder="Descripción breve" required></textarea><br>
     <button type="submit">Crear Evento</button>
   </form>
-  <script src="js/evento.js"></script>
+
+  <script>
+    // Verificar sesión activa
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!user) {
+      alert('Debe iniciar sesión para acceder al panel.');
+      window.location.href = 'login.html';
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      window.location.href = 'login.html';
+    }
+
+    document.getElementById('eventoForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const nombreEvento = document.getElementById('nombreEvento').value;
+      const fecha = document.getElementById('fechaEvento').value;
+      const whatsapp = document.getElementById('whatsapp').value;
+      const descripcion = document.getElementById('descripcion').value;
+
+      const nuevoEvento = {
+        usuario: user.email,
+        nombreEvento,
+        fecha,
+        whatsapp,
+        descripcion
+      };
+
+      const eventos = JSON.parse(localStorage.getItem('eventos')) || [];
+      eventos.push(nuevoEvento);
+      localStorage.setItem('eventos', JSON.stringify(eventos));
+
+      // Redirigir al panel de monitoreo
+      window.location.href = 'panel-monitoreo.html'; // <-- cambia esto si el nombre de tu archivo es diferente
+    });
+  </script>
 </body>
 </html>
