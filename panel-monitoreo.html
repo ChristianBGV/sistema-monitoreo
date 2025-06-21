@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Monitoreo</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    video {
+      max-width: 100%;
+      border: 2px solid #333;
+      margin-top: 20px;
+    }
+    #listaEventos li {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Panel de Monitoreo Vehicular</h2>
+  <button onclick="logout()">Cerrar sesión</button>
+
+  <h3>Eventos registrados</h3>
+  <ul id="listaEventos"></ul>
+
+  <h3>Vista de la cámara</h3>
+  <!-- Simulación de video en vivo (puedes cambiar src por un stream real) -->
+  <video controls autoplay muted loop>
+    <source src="media/video-ejemplo.mp4" type="video/mp4">
+    Tu navegador no soporta video HTML5.
+  </video>
+
+  <script>
+    // Verificación de sesión
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!user) {
+      alert('Debe iniciar sesión para acceder al panel.');
+      window.location.href = 'login.html';
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      window.location.href = 'login.html';
+    }
+
+    // Mostrar eventos del usuario
+    document.addEventListener('DOMContentLoaded', () => {
+      const eventos = JSON.parse(localStorage.getItem('eventos')) || [];
+      const eventosUsuario = eventos.filter(e => e.usuario === user.email);
+      const lista = document.getElementById('listaEventos');
+      lista.innerHTML = '';
+
+      if (eventosUsuario.length === 0) {
+        lista.innerHTML = '<li>No hay eventos registrados aún.</li>';
+        return;
+      }
+
+      eventosUsuario.forEach(ev => {
+        const item = document.createElement('li');
+        item.innerHTML = `
+          <strong>${ev.nombreEvento}</strong> - ${ev.fecha}<br>
+          WhatsApp: ${ev.whatsapp}<br>
+          ${ev.descripcion}
+        `;
+        lista.appendChild(item);
+      });
+    });
+  </script>
+</body>
+</html>
