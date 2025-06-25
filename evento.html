@@ -58,7 +58,7 @@
     document.getElementById('descripcionEvento').textContent = evento.descripcion;
 
     // ⚠️ Reemplaza esto con tu URL de ngrok activa
-    const socket = io('https://cs358-2001-1388-24b5-11a7-38d3-566e-6507-27.ngrok.io');
+    const socket = io('https://cofd-2001-1388-24b5-11a7-38d3-566e-6507-27.ngrok.io');
 
     // Mostrar imagen recibida desde el servidor
     socket.on('frame', (data) => {
