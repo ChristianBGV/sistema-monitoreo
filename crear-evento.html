@@ -53,7 +53,7 @@
       localStorage.setItem('eventos', JSON.stringify(eventos));
 
       // Redirigir al panel de monitoreo
-      window.location.href = 'panel-monitoreo.html'; // <-- cambia esto si el nombre de tu archivo es diferente
+      window.location.href = `evento.html?id=${eventos.length - 1}`; // <-- cambiar esto si el nombre de mi archivo es diferente
     });
   </script>
 </body>
