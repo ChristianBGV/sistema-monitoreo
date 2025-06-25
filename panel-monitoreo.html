@@ -15,6 +15,13 @@
       border-bottom: 1px solid #ccc;
       padding-bottom: 5px;
     }
+    #listaEventos a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    #listaEventos a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -24,15 +31,14 @@
   <h3>Eventos registrados</h3>
   <ul id="listaEventos"></ul>
 
-  <h3>Vista de la cámara</h3>
-  <!-- Simulación de video en vivo (puedes cambiar src por un stream real) -->
+  <h3>Vista de la cámara (simulada)</h3>
   <video controls autoplay muted loop>
     <source src="media/video-ejemplo.mp4" type="video/mp4">
     Tu navegador no soporta video HTML5.
   </video>
 
   <script>
-    // Verificación de sesión
+    // Verificar sesión activa
     const user = JSON.parse(localStorage.getItem('loggedInUser'));
     if (!user) {
       alert('Debe iniciar sesión para acceder al panel.');
@@ -44,28 +50,35 @@
       window.location.href = 'login.html';
     }
 
-    // Mostrar eventos del usuario
+    // Mostrar eventos del usuario con enlaces al monitoreo
     document.addEventListener('DOMContentLoaded', () => {
       const eventos = JSON.parse(localStorage.getItem('eventos')) || [];
-      const eventosUsuario = eventos.filter(e => e.usuario === user.email);
       const lista = document.getElementById('listaEventos');
       lista.innerHTML = '';
 
-      if (eventosUsuario.length === 0) {
-        lista.innerHTML = '<li>No hay eventos registrados aún.</li>';
-        return;
-      }
+      let encontrados = false;
 
-      eventosUsuario.forEach(ev => {
-        const item = document.createElement('li');
-        item.innerHTML = `
-          <strong>${ev.nombreEvento}</strong> - ${ev.fecha}<br>
-          WhatsApp: ${ev.whatsapp}<br>
-          ${ev.descripcion}
-        `;
-        lista.appendChild(item);
+      eventos.forEach((ev, idx) => {
+        if (ev.usuario === user.email) {
+          encontrados = true;
+          const item = document.createElement('li');
+          item.innerHTML = `
+            <a href="evento.html?id=${idx}">
+              <strong>${ev.nombreEvento}</strong> - ${ev.fecha}
+            </a><br>
+            WhatsApp: ${ev.whatsapp}<br>
+            ${ev.descripcion}
+          `;
+          lista.appendChild(item);
+        }
       });
+
+      if (!encontrados) {
+        lista.innerHTML = '<li>No hay eventos registrados aún.</li>';
+      }
     });
   </script>
 </body>
 </html>
+
+
