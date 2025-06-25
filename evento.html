@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitoreo del Evento</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+  <style>
+    #videoDeteccion {
+      margin-top: 20px;
+      border: 2px solid #444;
+      width: 640px;
+      height: 480px;
+    }
+    #infoEvento {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Monitoreo en Tiempo Real</h2>
+
+  <div id="infoEvento">
+    <p><strong>Evento:</strong> <span id="nombreEvento"></span></p>
+    <p><strong>Fecha:</strong> <span id="fechaEvento"></span></p>
+    <p><strong>WhatsApp:</strong> <span id="whatsappEvento"></span></p>
+    <p><strong>Descripción:</strong> <span id="descripcionEvento"></span></p>
+  </div>
+
+  <img id="videoDeteccion" src="" alt="Cargando detección...">
+
+  <script>
+    // Verificar sesión activa
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!user) {
+      alert('Debe iniciar sesión para acceder al monitoreo.');
+      window.location.href = 'login.html';
+    }
+
+    // Obtener el ID del evento desde la URL
+    const params = new URLSearchParams(window.location.search);
+    const eventoId = parseInt(params.get('id'));
+
+    // Obtener la lista completa de eventos
+    const eventos = JSON.parse(localStorage.getItem('eventos')) || [];
+
+    if (isNaN(eventoId) || !eventos[eventoId] || eventos[eventoId].usuario !== user.email) {
+      alert('Evento no encontrado o no tiene permisos.');
+      window.location.href = 'panel-monitoreo.html';
+    }
+
+    const evento = eventos[eventoId];
+
+    // Mostrar datos del evento
+    document.getElementById('nombreEvento').textContent = evento.nombreEvento;
+    document.getElementById('fechaEvento').textContent = evento.fecha;
+    document.getElementById('whatsappEvento').textContent = evento.whatsapp;
+    document.getElementById('descripcionEvento').textContent = evento.descripcion;
+
+    // ⚠️ Reemplaza esto con tu URL de ngrok activa
+    const socket = io('https://cs358-2001-1388-24b5-11a7-38d3-566e-6507-27.ngrok.io');
+
+    // Mostrar imagen recibida desde el servidor
+    socket.on('frame', (data) => {
+      const video = document.getElementById('videoDeteccion');
+      video.src = 'data:image/jpeg;base64,' + data;
+    });
+  </script>
+</body>
+</html>
